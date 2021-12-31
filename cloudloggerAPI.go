@@ -7,19 +7,12 @@ import (
 	"log"
 )
 
-type CloudLogger struct {
-	Logger *log.Logger
-}
-
-func InitializeLogger(projectID, logID string, loggingKey []byte, logType logging.Severity, ctx context.Context) *CloudLogger {
+func InitializeLogger(logName, projectID string, loggingKey []byte, serverity logging.Severity, ctx context.Context) *log.Logger {
 	client, err := logging.NewClient(ctx, projectID, option.WithCredentialsJSON(loggingKey))
 	if err != nil {
-		log.Println(err.Error())
+		log.Fatalf("Failed to create client: %v", err)
 		panic(err)
 	}
-	return &CloudLogger{Logger: client.Logger(logID).StandardLogger(logType)}
-}
-
-func (receiver CloudLogger) Log(text string, v ...interface{}) {
-	log.Printf(text, v)
+	log.Printf("Cloud Logger intialized...\nLogID: %s\nProjectID: %s\n, Severity: %s\n\n", logName, projectID, serverity)
+	return client.Logger(logName).StandardLogger(serverity)
 }
