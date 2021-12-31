@@ -13,6 +13,6 @@ func InitializeLogger(logName, projectID string, loggingKey []byte, serverity lo
 		log.Fatalf("Failed to create client: %v", err)
 		panic(err)
 	}
-	log.Printf("Cloud Logger intialized...\nLogID: %s\nProjectID: %s\n, Severity: %s\n\n", logName, projectID, serverity)
+	log.Printf("Cloud Logger intialized...\nLogID: %s\nProjectID: %s\nSeverity: %s\n\n", logName, projectID, serverity)
 	return client.Logger(logName).StandardLogger(serverity)
 }
