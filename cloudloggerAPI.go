@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type GoogleCloudLogger struct {
+type CloudLoggerAPI struct {
 	LogName           string
 	ProjectID         string
 	ServiceAccountKey []byte
@@ -19,12 +19,12 @@ type GoogleCloudLogger struct {
 	Severity          logging.Severity
 }
 
-func Build(logName, projectID string, serviceAccountKey []byte, severity logging.Severity, ctx context.Context) *GoogleCloudLogger {
+func Build(logName, projectID string, serviceAccountKey []byte, severity logging.Severity, ctx context.Context) *CloudLoggerAPI {
 	client, err := logging.NewClient(ctx, projectID, option.WithCredentialsJSON(serviceAccountKey))
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
-	googleCloudLogger := &GoogleCloudLogger{
+	googleCloudLogger := &CloudLoggerAPI{
 		LogName:   logName,
 		ProjectID: projectID,
 		Client:    client,
@@ -35,13 +35,13 @@ func Build(logName, projectID string, serviceAccountKey []byte, severity logging
 	return googleCloudLogger
 }
 
-func (receiver *GoogleCloudLogger) Printf(text string, v interface{}) {
+func (receiver *CloudLoggerAPI) Printf(text string, v interface{}) {
 	receiver.OutputStream.StandardLogger(receiver.Severity).Printf(text, v)
 	receiver.OutputStream.Flush()
 	log.Printf(strings.ToUpper(fmt.Sprint(receiver.Severity))+" - "+text, v)
 }
 
-func (receiver *GoogleCloudLogger) Println(text string) {
+func (receiver *CloudLoggerAPI) Println(text string) {
 	receiver.OutputStream.StandardLogger(receiver.Severity).Println(text)
 	receiver.OutputStream.Flush()
 	log.Println(strings.ToUpper(fmt.Sprint(receiver.Severity)) + " - " + text)
